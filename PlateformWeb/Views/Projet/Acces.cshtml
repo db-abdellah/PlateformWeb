@@ -1,0 +1,145 @@
+﻿
+@model PlateformWeb.Entites.UtilisateursModel
+@{
+    ViewData["Title"] = "Gestion d'accès";
+}
+
+
+
+
+
+    <div >
+
+        <div class="select-container-left">
+            <label>Ajouter l'accès : </label> <br />
+            <input type="text" placeholder="Recherche" id="rechercheUnauthorizedSelect" class="search-bar" onkeyup="Search('UnauthorizedSelect')" />
+            <button class="btn createBtn" style="float:right" onclick="GiveAcces()">Ajouter</button> <br />
+
+            <select name="UnauthorizedSelect" id="UnauthorizedSelect" size="10" placeholder="list des utilisateurs">
+                @foreach (PlateformWeb.Entities.Utilisateur item in Model.UnAuthorizedUtilisateurs)
+                {
+                    <option value="@item.idUtilisateur">@item.nomUtilisateur  @item.prenomUtilisateur</option>
+                }
+            </select>
+        </div>
+
+        <div class="select-container-right" size="10">
+            <label>Supprimer l'accès : </label><br />
+            <input list="AuthorizedSelect" placeholder="Recherche" id="rechercheAuthorizedSelect" class="search-bar" onkeyup="Search('AuthorizedSelect')" />
+            <button class="btn createBtn" style="float:right" onclick="RemoveAcces()">Supprimer</button><br />
+
+            <select name="AuthorizedSelect" id="AuthorizedSelect" size="10" placeholder="list des utilisateurs">
+                @foreach (PlateformWeb.Entities.Utilisateur item in Model.AuthorizedUtilisateurs)
+                {
+                    <option value="@item.idUtilisateur">@item.nomUtilisateur  @item.prenomUtilisateur</option>
+                }
+            </select>
+        </div>
+
+
+
+        
+    </div>
+
+
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        var idProjet= @Model.projet.idProjet;
+            function GiveAcces() {
+                var idUtilisateur = $("#UnauthorizedSelect").val();
+
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Projet/ProvideAcces",
+                    data: { 'idProjet': idProjet, 'idUtilisateur':idUtilisateur},
+                    cache: false,
+
+
+                    success: function (result) {
+                        if (result == "true") {
+                            location.reload();
+                        }
+                        if (result == "false") {
+                            alert("error deleting the User")
+                        }
+                    },
+                    error: function (xhr) {
+                        //debugger;
+                        console.log(xhr.responseText);
+                        alert("Error has occurred..");
+
+                    },
+                    failure: function (response) {
+                        alert("something unexpected happend");
+                    },
+                });
+            }
+        function RemoveAcces() {
+
+
+            var idUtilisateur = $("#AuthorizedSelect").val();
+
+
+
+            $.ajax({
+                type: "POST",
+                url: "/Projet/DenyAcces",
+                data: { 'idProjet': idProjet, 'idUtilisateur': idUtilisateur },
+                cache: false,
+
+
+                success: function (result) {
+                    if (result == "true") {
+                        location.reload();
+                    }
+                    if (result == "false") {
+                        alert("error deleting the User")
+                    }
+                },
+                error: function (xhr) {
+                    //debugger;
+                    console.log(xhr.responseText);
+                    alert("Error has occurred..");
+
+                },
+                failure: function (response) {
+                    alert("something unexpected happend");
+                },
+            });
+        }
+
+        //Search Function
+        function Search(selectId) {
+            // Declare variables
+            var input, filter, ul, li, a, i, txtValue;
+            if (selectId == 'UnauthorizedSelect')
+                input = document.getElementById('rechercheUnauthorizedSelect');
+            else if (selectId == 'AuthorizedSelect')
+                input = document.getElementById('rechercheAuthorizedSelect');
+
+
+            filter = input.value.toUpperCase();
+            select = document.getElementById(selectId);
+            options= select.getElementsByTagName('option');
+
+            // Loop through all list items, and hide those who don't match the search query
+            for (i = 0; i < options.length; i++) {
+
+                txtValue = options[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    options[i].style.display = "";
+                } else {
+                    options[i].style.display = "none";
+                }
+            }
+        }
+
+
+    </script>
+}
+

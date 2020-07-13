@@ -1,0 +1,158 @@
+﻿@model PlateformWeb.Entities.Utilisateur
+
+@{
+    ViewData["Title"] = "Editer l'utilisateur";
+    ViewData["Controller"] = "Admin";
+    ViewData["action"] = "Index";
+}
+
+<h1>Editer l'utilisateur :</h1>
+
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Update" id="mainForm" method="post" autocomplete="off">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+
+                <input asp-for="idUtilisateur" id="idUtilisateur" class="form-control" type="hidden" />
+
+            </div>
+            <div class="form-group">
+                <label class="control-label">Nom d'utilisateur</label>
+                <input asp-for="nomUtilisateur"class="search-bar" style="float:none; width: 100%;" placeholder="@Model.nomUtilisateur" />
+                <span asp-validation-for="nomUtilisateur" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Prenom d'utilisateur</label>
+                <input asp-for="prenomUtilisateur" class="search-bar" style="float:none; width: 100%;" placeholder="@Model.prenomUtilisateur" />
+                <span asp-validation-for="prenomUtilisateur" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Login d'utilisateur</label>
+                <input asp-for="loginUtilisateur" class="search-bar" style="float:none; width: 100%;" placeholder="@Model.loginUtilisateur"  readonly/>
+                <span asp-validation-for="loginUtilisateur" class="text-danger"></span>
+                
+            </div>
+            <div class="form-group">
+                <label aclass="control-label">Mot de passe d'utilisateur</label>
+                <input asp-for="motDePasseUtilisateur" class="search-bar" style="float:none; width: 100%;" placeholder="@Model.motDePasseUtilisateur" />
+                <span asp-validation-for="motDePasseUtilisateur" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label aclass="control-label">Date de creation d'utilisateur</label>
+                <input type="text" class="search-bar" style="float:none; width: 100%;" value="@Model.dateCreationUtilisateur" readonly/>
+                <span asp-validation-for="motDePasseUtilisateur" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+
+
+                @Html.Label("Fonction d'utilisateur")
+                <br />
+                @if (Model.fonctionUtilisateur == "Chef")
+                {
+                    <input id="fonctionUtilisateur" name="fonctionUtilisateur" checked="checked" type="radio" value="Chef">
+                    <label for="Chef">Chef</label>
+                    <br>
+                    <input id="fonctionUtilisateur" name="fonctionUtilisateur" type="radio" value="Operateur">
+                    <label for="Operateur">Operateur</label>
+
+                }
+                else
+                {
+                    <input id="fonctionUtilisateur" name="fonctionUtilisateur"  type="radio" value="Chef">
+                    <label for="Chef">Chef</label>
+                    <br>
+                    <input id="fonctionUtilisateur" name="fonctionUtilisateur" checked="checked" type="radio" value="Operateur">
+                    <label for="Operateur">Operateur</label>
+                }
+
+            </div>
+
+
+            <div class="form-group">
+                <p class="alert-danger" id="FormError">Veuillez remplir tous les champs</p>
+                <input type="submit" value="Valider" class="btn createBtn" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">List des utilisateurs</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+
+    initialize();
+
+    function initialize() {
+        
+        document.getElementById("FormError").hidden = true;
+    };
+
+    $('#mainForm').submit(function () {
+        initialize();
+        if (checkInput()) {
+            updateUtilisateur();
+        } else
+            document.getElementById("FormError").hidden = false;
+        return false;
+    });
+
+
+   
+
+
+    function updateUtilisateur() {
+
+        var login = $("#loginUtilisateur").val();
+        var password = $("#motDePasseUtilisateur").val();
+        var prenom = $("#prenomUtilisateur").val();
+        var nom = $("#nomUtilisateur").val();
+        var fonction = $("input[name='fonctionUtilisateur']:checked").val();
+        var id = $("#idUtilisateur").val();
+      
+        $.ajax({
+            type: "POST",
+
+            url: "/Admin/Update",
+            data: { 'idUtilisateur': id, 'nomUtilisateur': nom, 'prenomUtilisateur': prenom, 'loginUtilisateur': login, 'motDePasseUtilisateur': password, 'fonctionUtilisateur': fonction },
+            cache: false,
+
+
+            success: function (result) {
+                if (result == "true") {
+                    var baseUrl = "@Url.Action("Index","admin")";
+                    window.location.href = baseUrl;
+
+                }
+                if (result == "false") {
+                    return;
+                }
+            },
+
+        });
+    }
+
+
+
+    function checkInput() {
+            var login = $("#loginUtilisateur").val();
+            var password = $("#motDePasseUtilisateur").val();
+            var prenom = $("#prenomUtilisateur").val();
+            var nom = $("#nomUtilisateur").val();
+
+            if (login == null || login == "" || password == null || password == "" || prenom == null || prenom == "" || nom == "" || nom == null)
+                return false;
+            else
+                return true;
+    };
+
+
+</script>
+}

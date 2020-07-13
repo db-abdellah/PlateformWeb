@@ -1,0 +1,82 @@
+﻿
+.logOutBtn {
+    border: none;
+    height: auto;
+    width: 100px;
+    color: #000;
+    font-size: 18px;
+    border-radius: 10px;
+    background: #FFF;
+    margin-left: 70%;
+    padding-left: 1%;
+    padding-right: 1%;
+    text-align: center;
+    padding:5px;
+    
+    background: #5a189a;
+    color:white;
+    padding-top:initial;
+}
+
+    .logOutBtn:hover {
+        cursor: pointer;
+        background: rgba(123,44,191,1);
+        color: #FFF;
+        text-decoration: none;
+    }
+
+
+.UtilisateurInfo:hover {
+    background: rgba(123,44,191,1);
+    color: white;
+}.UtilisateurInfo:hover  a{
+    
+    color: white;
+}
+
+th {
+    color: rgba(123,44,191,1);
+   
+}
+.actionBtn {
+    border: none;
+    height: initial;
+    width: 100px;
+    color: #000;
+    font-size: 18px;
+    border-radius: 10px;
+    background: #FFF;
+    margin-left: 10%;
+    padding-left: 1%;
+    padding-right: 1%;
+    text-align: center;
+    padding: 5px;
+    background: #5a189a;
+    color: white;
+    padding-top: initial;
+   
+}
+
+    .actionBtn:hover {
+        cursor: pointer;
+        background: rgba(123,44,191,1);
+        color: #FFF;
+        text-decoration: none;
+    }
+
+.previewImg{
+    border-color:lightgray;
+    border-radius:10px;
+    width:40%;
+    height:40%;
+}
+
+table .acces-table {
+    width : 800px;
+}
+
+div .select-container {
+    width: 20%;
+}
+
+

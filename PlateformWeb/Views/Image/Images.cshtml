@@ -1,0 +1,134 @@
+﻿@model List<PlateformWeb.Entities.Image>
+
+@{
+
+    @using System.Configuration;
+    ViewData["Title"] = "Visualisation des Images";
+    String MainFolder = ConfigurationManager.AppSettings["MainFolder"].ToString();
+    int iterator = 0;
+}
+
+<h1>@ViewBag.id</h1>
+<div class="imageElements">
+    <div class="ImgDiv">
+        <button onclick="previousImage()"  style="float:left; width:180px" class="btn NextBtn">Document précédent</button>
+        <button onclick="nextImage()" style="float:right;width:180px;" class="btn NextBtn">Document suivant</button>
+        <br />
+        <img class="previewImg" id="myImage" src="" />
+        <br />
+        <br />
+        <button onclick="DeleteImage()" id="DeleteBtn" style="width:180px;" class="btn DeleteBtn">Supprimer</button>
+    </div>
+
+
+
+    
+    <ul hidden="hidden">
+        @foreach (PlateformWeb.Entities.Image img in Model)
+        {
+            <li class="imageId">@img.idImage</li>
+        }
+    </ul>
+</div>
+
+
+
+@section scripts {
+
+    <script>
+
+        var i = 0;
+        var aggregateFunctions = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.list));
+
+
+        document.getElementById("myImage").src = aggregateFunctions[0];
+
+
+        function nextImage() {
+            if (i >= aggregateFunctions.length-1) {
+
+            } else {
+                i++;
+                @{iterator++; }
+
+                document.getElementById("myImage").src = aggregateFunctions[ i];
+
+            }
+
+        } function previousImage() {
+            if (i == 0) {
+
+
+            } else {
+                i--;
+                 @{iterator--; }
+
+                document.getElementById("myImage").src = aggregateFunctions[ i];
+
+            }
+
+        }
+        function DeleteImage() {
+
+            var idList = document.getElementsByClassName("imageId");
+            var result = confirm("Êtes-vous sûr de vouloir supprimer ce document?");
+            if (result == true) {
+                $.ajax({
+                    type: "POST",
+
+                    url: "/Image/Delete",
+                    data: { 'idImage': idList[i].innerHTML },
+                    cache: false,
+
+
+                    success: function (result) {
+
+                        location.reload();
+
+                    },
+                    error: function (xhr) {
+                        //debugger;
+                        console.log(xhr.responseText);
+                        alert("Error has occurred..");
+
+                    },
+                    failure: function (response) {
+                        alert("something unexpected happend");
+                    },
+                });
+            } else
+                return;
+        }
+
+        function Delete() {
+
+            var idList = document.getElementById("idList");
+
+            $.ajax({
+                type: "POST",
+
+                url: "/Image/Delete",
+                data: { 'idImage': idList[i].innerHtml },
+                cache: false,
+
+
+                success: function (result) {
+                    alert(result);
+                    location.reload();
+
+                },
+                error: function (xhr) {
+                    //debugger;
+                    console.log(xhr.responseText);
+                    alert("Error has occurred..");
+
+                },
+                failure: function (response) {
+                    alert("something unexpected happend");
+                },
+            });
+        }
+
+    </script>
+
+}

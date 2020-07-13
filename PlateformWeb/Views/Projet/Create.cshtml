@@ -1,0 +1,122 @@
+﻿@model PlateformWeb.Entities.Projet
+
+@{
+    ViewData["Title"] = "Nouveau Projet";
+}
+
+    <h1>Nouveau Projet</h1>
+
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create"  id="mainForm" autocomplete="off">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label class="control-label">Nom du projet:</label>
+                <input asp-for="nomProjet" id="nomProjet" class="search-bar" style="float:none; width: 100%;" />
+                <span asp-validation-for="nomProjet" class="text-danger"></span>
+                <p class="alert-danger" id="NomError">Ce nom existe déja</p>
+            </div>
+            
+            <div class="form-group">
+                <p class="alert-danger" id="FormError">Veuillez saisir le nom de projet</p>
+                <input type="submit" value="Valider" class="btn createBtn" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Chef" asp-action="Index">List des projets</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script type="text/javascript">
+
+    initialize();
+
+    function initialize() {
+        document.getElementById("NomError").hidden = true;
+        document.getElementById("FormError").hidden = true;
+    };
+
+
+
+    $('#mainForm').submit(function () {
+        initialize();
+        if (checkInput()) {
+            var nomProjet = $("#nomProjet").val();
+
+
+            $.ajax({
+                type: "POST",
+
+                url: "/Projet/ProjetCheck",
+                data: { 'nomProjet': nomProjet },
+                cache: false,
+
+
+                success: function (result) {
+                    if (result == "true") {
+
+                        createProjet();
+                    }
+                    if (result == "false") {
+                        document.getElementById("NomError").hidden = false;
+
+                    }
+                },
+
+            });
+
+        } else
+            document.getElementById("FormError").hidden = false;
+        return false;
+    });
+
+
+    function createProjet() {
+
+        var nomProjet = $("#nomProjet").val();
+       
+        $.ajax({
+            type: "POST",
+
+            url: "/Projet/Create",
+            data: { 'nomProjet': nomProjet},
+            cache: false,
+
+
+            success: function (result) {
+                if (result == "true") {
+                    
+                    var baseUrl = "@Url.Action("Index","Chef")";
+                    window.location.href = baseUrl;
+
+                }
+                if (result == "false") {
+                    return;
+                }
+            },
+
+        });
+    }
+
+
+
+    function checkInput() {
+            
+        var nomProjet = $("#nomProjet").val();
+        if (nomProjet == null || nomProjet == "" )
+                return false;
+            else
+                return true;
+    };
+
+
+</script>
+}

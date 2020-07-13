@@ -1,0 +1,141 @@
+﻿@model IEnumerable<PlateformWeb.Entities.Utilisateur>
+
+@{
+    ViewData["Title"] = "List des utilisateurs";
+    
+}
+
+<h1>List des utilisateurs</h1>
+<hr/>
+@if (Model.Count() != 0)
+{
+
+    <input type="text" placeholder="Recherche" id="rechercheBar" class="search-bar" onkeyup="Search()" />
+   
+    <table class="table" id="table">
+        <thead>
+            <tr>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Nom complet
+
+                </th>
+                <th>
+                    Date de création
+                </th>
+
+                <th>
+                    Fonction
+                </th>
+                <th> <a class="btn AccesBtn" style="float:right" asp-action="Create">Nouvel utilisateur</a></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int nbr = 0;}
+            @foreach (var item in Model)
+            {
+
+                <tr class="UtilisateurInfo">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.idUtilisateur)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.nomUtilisateur)  @Html.DisplayFor(modelItem => item.prenomUtilisateur)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.dateCreationUtilisateur)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.fonctionUtilisateur)
+                    </td>
+                    <td>
+                        <div style="float:right;">
+                            @Html.ActionLink("Modifier", "Edit", item, new { @class = "btn EditBtn" })
+
+                            <button id="delete"  class="btn DeleteBtn" onclick="Delete(@item.idUtilisateur)">Supprimer</button>
+                        </div>
+                    </td>
+                </tr>
+                nbr++;
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div style="margin-top:100px; text-align: center;">
+        <h3 style=" vertical-align: middle">Aucun Utilisateur n'est trouvé</h3>
+        <h6 style=" vertical-align: middle">
+            <a asp-controller="Admin" asp-action="Create">Ajouter un nouveau utilisateur</a>
+        </h6>
+    </div>
+}
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        function Delete(id) {
+
+            var result = confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur?");
+            if (result == true) {
+                $.ajax({
+                    type: "POST",
+
+                    url: "/Admin/Delete",
+                    data: { 'idUtilisateur': id },
+                    cache: false,
+
+
+                    success: function (result) {
+                        if (result == "true") {
+
+                            location.reload();
+                        }
+                        if (result == "false") {
+                            location.reload();
+                        }
+                    },
+                    error: function (xhr) {
+                        //debugger;
+                        console.log(xhr.responseText);
+                        location.reload();
+
+                    },
+                    failure: function (response) {
+                        alert("something unexpected happend");
+                    },
+                });
+            } else
+                return;
+        }
+
+
+        function Search() {
+            // Declare variables
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("rechercheBar");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("table");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+}

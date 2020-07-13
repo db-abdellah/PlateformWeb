@@ -1,0 +1,158 @@
+﻿@model PlateformWeb.Entities.Utilisateur
+
+@{
+    ViewData["Title"] = "Nouveau utilisateur";
+    ViewData["Controller"] = "Admin";
+    ViewData["action"] = "Index";
+}
+
+    <h1>Nouveau utilisateur</h1>
+
+<h4>Données d'utilisateur:</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" autocomplete="off" id="mainForm" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label class="control-label">Nom d'utilisateur</label>
+                <input asp-for="nomUtilisateur" id="nomUtilisateur" class="search-bar" style="float:none; width: 100%;" />
+                <span asp-validation-for="nomUtilisateur" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Prenom d'utilisateur</label>
+                <input asp-for="prenomUtilisateur" id="prenomUtilisateur" class="search-bar" style="float:none; width: 100%;" />
+                <span asp-validation-for="prenomUtilisateur" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Login d'utilisateur</label>
+                <input asp-for="loginUtilisateur" id="loginUtilisateur" class="search-bar" style="float:none; width: 100%;" />
+                <span asp-validation-for="loginUtilisateur" class="text-danger"></span>
+                <p class="alert-danger" id="loginError">Ce login est déja utilisé</p>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Mot de passe utilisateur</label>
+                <input asp-for="motDePasseUtilisateur" id="motDePasseUtilisateur" class="search-bar" style="float:none; width: 100%;" />
+                <span asp-validation-for="motDePasseUtilisateur" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+
+                <label for="Fonction_d_utilisateur">Fonction d'utilisateur</label>
+                <br>
+
+
+                <input id="fonctionUtilisateur" name="fonctionUtilisateur" checked="checked" type="radio" value="Chef">
+                <label for="Chef">Chef</label>
+                <br>
+                <input id="fonctionUtilisateur" name="fonctionUtilisateur" type="radio" value="Operateur">
+                <label for="Operateur">Operateur</label>
+
+
+
+            </div>
+           
+            <div class="form-group">
+                <p class="alert-danger" id="FormError">Veuillez remplir tous les champs</p>
+                <input type="submit" value="Valider" class="btn createBtn" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">List des utilisateurs</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+
+    initialize();
+
+    function initialize() {
+    document.getElementById("loginError").hidden = true;
+        document.getElementById("FormError").hidden = true;
+    };
+
+
+
+    $('#mainForm').submit(function () {
+        initialize();
+        if (checkInput()) {
+            var login = $("#loginUtilisateur").val();
+           
+            $.ajax({
+                type: "POST",
+
+                url: "/Admin/loginCheck",
+                data: { 'login': login },
+                cache: false,
+
+
+                success: function (result) {
+                    if (result == "true") {
+                        
+                        createUtilisateur();
+                    }
+                    if (result == "false") {
+                        document.getElementById("loginError").hidden = false;
+
+                    }
+                },
+
+            });
+
+        } else
+            document.getElementById("FormError").hidden = false;
+        return false;
+    });
+
+
+    function createUtilisateur() {
+
+        var login = $("#loginUtilisateur").val();
+        var password = $("#motDePasseUtilisateur").val();
+        var prenom = $("#prenomUtilisateur").val();
+        var nom = $("#nomUtilisateur").val();
+        var fonction = $("input[name='fonctionUtilisateur']:checked").val();
+        $.ajax({
+            type: "POST",
+
+            url: "/Admin/Create",
+            data: { 'nomUtilisateur': nom, 'prenomUtilisateur': prenom, 'loginUtilisateur': login, 'motDePasseUtilisateur': password, 'fonctionUtilisateur': fonction },
+            cache: false,
+
+
+            success: function (result) {
+                if (result == "true") {
+                    var baseUrl = "@Url.Action("Index","admin")";
+                    window.location.href = baseUrl;
+
+                }
+                if (result == "false") {
+                    return;
+                }
+            },
+
+        });
+    }
+
+
+
+    function checkInput() {
+            var login = $("#loginUtilisateur").val();
+            var password = $("#motDePasseUtilisateur").val();
+            var prenom = $("#prenomUtilisateur").val();
+            var nom = $("#nomUtilisateur").val();
+
+            if (login == null || login == "" || password == null || password == "" || prenom == null || prenom == "" || nom == "" || nom == null)
+                return false;
+            else
+                return true;
+    };
+
+
+</script>
+}
